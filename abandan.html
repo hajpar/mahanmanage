@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>جدول قابل ویرایش و رنگی</title>
+  <style>
+    body {
+      direction: rtl;
+      font-family: Vazirmatn, sans-serif;
+      text-align: center;
+      background-color: #f3f3f3;
+      padding-top: 30px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    td, th {
+      border: 1px solid #aaa;
+      padding: 10px 20px;
+      text-align: center;
+      min-width: 80px;
+      cursor: text;
+    }
+    td:focus {
+      outline: 2px solid #2196F3;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #388E3C;
+    }
+    #colorPicker {
+      margin-top: 10px;
+      width: 100px;
+      height: 35px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📋 جدول قابل ویرایش و رنگی</h2>
+
+  <table id="myTable">
+    <tr>
+      <th>ستون ۱</th>
+      <th>ستون ۲</th>
+      <th>ستون ۳</th>
+    </tr>
+    <tr>
+      <td contenteditable="true">ردیف ۱</td>
+      <td contenteditable="true">ردیف ۱</td>
+      <td contenteditable="true">ردیف ۱</td>
+    </tr>
+  </table>
+
+  <button onclick="addRow()">➕ افزودن سطر</button>
+  <button onclick="addColumn()">➕ افزودن ستون</button>
+  <br>
+  <input type="color" id="colorPicker" title="تغییر رنگ سلول">
+
+  <script>
+    const table = document.getElementById("myTable");
+    const colorPicker = document.getElementById("colorPicker");
+    let selectedCell = null;
+
+    // افزودن سطر جدید
+    function addRow() {
+      const columnCount = table.rows[0].cells.length;
+      const newRow = table.insertRow();
+
+      for (let i = 0; i < columnCount; i++) {
+        const cell = newRow.insertCell();
+        cell.textContent = `سطر ${table.rows.length - 1}`;
+        cell.contentEditable = "true";
+        enableCellEvents(cell);
+      }
+    }
+
+    // افزودن ستون جدید
+    function addColumn() {
+      const headerRow = table.rows[0];
+      const newColIndex = headerRow.cells.length + 1;
+
+      const newHeaderCell = document.createElement("th");
+      newHeaderCell.textContent = `ستون ${newColIndex}`;
+      headerRow.appendChild(newHeaderCell);
+
+      for (let i = 1; i < table.rows.length; i++) {
+        const cell = table.rows[i].insertCell();
+        cell.textContent = `ردیف ${i}`;
+        cell.contentEditable = "true";
+        enableCellEvents(cell);
+      }
+    }
+
+    // اضافه کردن قابلیت انتخاب و تغییر رنگ
+    function enableCellEvents(cell) {
+      cell.addEventListener("click", () => {
+        selectedCell = cell;
+      });
+
+      cell.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        selectedCell = cell;
+        colorPicker.click();
+      });
+    }
+
+    // رنگ‌دهی به سلول انتخاب‌شده
+    colorPicker.addEventListener("input", () => {
+      if (selectedCell) {
+        selectedCell.style.backgroundColor = colorPicker.value;
+      }
+    });
+
+    // فعال‌سازی قابلیت برای سلول‌های اولیه
+    for (let i = 1; i < table.rows.length; i++) {
+      for (let j = 0; j < table.rows[i].cells.length; j++) {
+        enableCellEvents(table.rows[i].cells[j]);
+      }
+    }
+  </script>
+
+</body>
+</html>
+
